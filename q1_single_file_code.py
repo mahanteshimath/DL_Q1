@@ -223,35 +223,21 @@ for name, H in embeddings.items():
 import os
 from torchvision.utils import save_image
 
-# Define the base directory to save the images
-base_dir = '.'
+# --- Create data folder structure ---
+data_dir = 'data'
+train_dir = os.path.join(data_dir, 'Train')
+test_dir = os.path.join(data_dir, 'Test')
+os.makedirs(train_dir, exist_ok=True)
+os.makedirs(test_dir, exist_ok=True)
 
-# Define the paths for train and test image directories
-train_img_dir = os.path.join(base_dir, 'mnist_train_images')
-test_img_dir = os.path.join(base_dir, 'mnist_test_images')
-
-# Create the directories if they don't exist
-os.makedirs(train_img_dir, exist_ok=True)
-os.makedirs(test_img_dir, exist_ok=True)
-
-# Save the training dataset as images
-print("Saving training dataset as images...")
-for i, (image, label) in enumerate(train_ds):
-    # Create a subdirectory for each label
-    label_dir = os.path.join(train_img_dir, str(label))
-    os.makedirs(label_dir, exist_ok=True)
-    # Save the image
-    save_image(image, os.path.join(label_dir, f'Train_{i}.png'))
-
-print("Training dataset saved as images.")
-
-# Save the testing dataset as images
-print("Saving testing dataset as images...")
-for i, (image, label) in enumerate(test_ds):
-    # Create a subdirectory for each label
-    label_dir = os.path.join(test_img_dir, str(label))
-    os.makedirs(label_dir, exist_ok=True)
-    # Save the image
-    save_image(image, os.path.join(label_dir, f'Test_{i}.png'))
-
-print("Testing dataset saved as images.")
+# --- Split and save MNIST data into Train and Test folders ---
+print("Saving MNIST images into data/Train and data/Test folders...")
+for split_name, dataset, split_dir in [
+    ('Train', train_ds, train_dir),
+    ('Test', test_ds, test_dir)
+]:
+    for i, (image, label) in enumerate(dataset):
+        label_dir = os.path.join(split_dir, str(label))
+        os.makedirs(label_dir, exist_ok=True)
+        save_image(image, os.path.join(label_dir, f'{split_name}_{i}.png'))
+    print(f"{split_name} images saved in {split_dir}")
